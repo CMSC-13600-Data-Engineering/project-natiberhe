@@ -1,0 +1,26 @@
+Certainly! Let's incorporate the additional specifications and architecture details into the design:
+
+### Data Model for AttendanceChimp Web Application:
+
+1. **Entities**:
+   - **User**: Represents users of the AttendanceChimp application. Each user has a unique `user_id`, and their type can be either an instructor or a student. Additional attributes may include `username`, `password`, and `email`.
+   - **Course**: Represents courses offered by instructors. Each course has a unique `course_id`.
+   - **Lecture**: Represents class sessions within courses. Each lecture is associated with a specific course and has a unique identifier. Additional attributes may include `lecture_date`, `start_time`, and `end_time`.
+   - **QRCode**: Represents QR codes uploaded by students for attendance tracking in lectures. Each QR code is associated with a specific lecture and student, and it has a unique identifier. Additional attributes may include `upload_datetime`, `qr_code_image`, and `is_valid`.
+
+2. **Relationships**:
+   - **User-Course Relationship**: Users (both instructors and students) are associated with courses. An instructor can teach multiple courses, and a student can be enrolled in multiple courses. This implies a many-to-many relationship between users and courses.
+   - **Course-Lecture Relationship**: Each course can have multiple lectures, but each lecture belongs to only one course. This implies a one-to-many relationship between courses and lectures.
+   - **Lecture-QRCode Relationship**: Each lecture can have multiple QR codes uploaded by students for attendance tracking. This implies a one-to-many relationship between lectures and QR codes.
+   - **User-QRCode Relationship**: Each user (student) can upload multiple QR codes for attendance tracking. This implies a one-to-many relationship between users and QR codes.
+
+3. **Attributes**:
+   - **User**: `user_id` (PK), `user_type` (instructor or student), `username`, `password`, `email`
+   - **Course**: `course_id` (PK), `course_name`, `instructor_id` (FK)
+   - **Lecture**: `lecture_id` (PK), `course_id` (FK), `lecture_date`, `start_time`, `end_time`
+   - **QRCode**: `qr_code_id` (PK), `lecture_id` (FK), `student_id` (FK), `upload_datetime`, `qr_code_image`, `is_valid`
+
+### Architecture:
+AttendanceChimp will be built on `python-django`. Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. It takes care of much of the hassle of web development, so you can focus on writing your app without needing to reinvent the wheel. Django can run a local web-server and can easily interface with a database backend. We will be using a SQLite database backend. SQLite is a database engine written in the C programming language. It is not a standalone app; rather, it is a library that software developers embed in their apps.
+
+This data model and architecture are designed to meet the requirements and specifications outlined for the AttendanceChimp web application, including user management, course management, attendance tracking, and analytics functionalities.
