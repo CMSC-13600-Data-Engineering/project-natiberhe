@@ -4,10 +4,30 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
-  Hi {{ user.username }}!
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">Log In</a>
-{% endif %}
+	<h2>AttendanceChip Dashboard</h2>
+
+	<br/>
+	{% if user.is_authenticated %}
+
+	  <h4>Hi {{ user.username }}!</h4>
+
+	  <a href="http://localhost:8000/app/course_create">Create a course</a><br/>
+	  <a href="http://localhost:8000/app/qr_create">Create a new QR code</a> <br/>
+	  <a href="http://localhost:8000/app/qr_upload">Upload a QR code</a>
+	  <p><br/></p>
+	  
+	  <form method="post" action="{% url 'logout' %}">
+    		{% csrf_token %}
+      <button type="submit">logout</button>
+	  </form>
+	
+	{% else %}
+
+	  <h4>You are not logged in</h4>
+	  <a href="{% url 'login' %}">Log In</a> <br/>
+	  <a href="http://localhost:8000/app/new">Sign Up</a>
+	
+	{% endif %}
+
+
 {% endblock %}

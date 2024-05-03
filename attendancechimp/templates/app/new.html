@@ -1,0 +1,35 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Sign Up!{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  
+  <p>You are already logged in!</p>
+
+{% else %}
+  
+  <h2>New User Registration</h2>
+
+  <form action="http://localhost:8000/app/new_submit" method="post">
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+    
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+    
+    <label for="email">Email Address:</label><br>
+    <input type="email" id="email" name="email" required><br><br>
+    
+    <label for="choice">I am a:</label><br>
+    <input type="radio" id="choice1" name="choice" value="student" checked>
+    <label for="choice1">Student</label><br>
+    <input type="radio" id="choice2" name="choice" value="instructor">
+    <label for="choice2">Instructor</label><br><br>
+    
+    <input type="submit" value="Submit">
+</form>
+
+{% endif %}
+{% endblock %}
