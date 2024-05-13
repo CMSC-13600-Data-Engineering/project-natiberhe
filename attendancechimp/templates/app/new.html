@@ -1,0 +1,37 @@
+<!-- attendancechimp/templates/app/new.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+</head>
+<body>
+    <h1>Create a new user </h1>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+    <form action="{% url 'create_user' %}" method="POST">
+        {% csrf_token %}
+        <label for="username">Name:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="email">University Email Address:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+        <label>Role:</label><br>
+        <input type="radio" id="instructor" name="role" value="instructor" required>
+        <label for="instructor">Instructor</label><br>
+        <input type="radio" id="student" name="role" value="student" required>
+        <label for="student">Student</label><br><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+        <input type="submit" value="Sign Up">
+    </form>
+    
+</body>
+</html>
