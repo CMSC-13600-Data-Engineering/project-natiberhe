@@ -133,26 +133,59 @@ def create_qr_code(course):
 
 
 class QRCodeUpload(models.Model):
-    """This model represents a particular qrcode upload from a student."""
-
-    # an internal unique id
-    auto_increment_id = models.AutoField(primary_key=True)
-
-    # linked to a course
+    id = models.AutoField(primary_key=True)  # Explicitly defining the ID field, though it's usually not necessary
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-
-    # linked to a student
     student = models.ForeignKey(UniversityPerson, on_delete=models.CASCADE)
-
-    # data
-    image = models.ImageField(upload_to="data")
-
-    # time stamp on upload
+    qr_code = models.ForeignKey(QRCode, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='uploads/', null=True, blank=True)
     uploaded = models.DateTimeField(auto_now_add=True)
 
 
+
 # this is the functionality to process an upload
-def process_upload(course, student, image):
-    upload = QRCodeUpload(course=course, student=student, image=image)
+def process_upload(course, student, qr_code, image=None):
+    upload = QRCodeUpload(course=course, student=student, qr_code=qr_code, image=image)
     upload.save()
     return upload
+
+
+import datetime
+from django.utils import timezone
+import pytz
+
+def getUploadsForCourse(course_id):
+    try:
+        course = Course.objects.get(auto_increment_id=course_id)
+    except Course.DoesNotExist:
+        return []
+
+    uploads = QRCodeUpload.objects.filter(course=course)
+    valid_uploads = []
+    central_tz = pytz.timezone('America/Chicago')  # Ensure timezone awareness
+
+    day_mapping = {
+        0: course.m_class,  # Monday
+        1: course.tu_class, # Tuesday
+        2: course.w_class,  # Wednesday
+        3: course.th_class, # Thursday
+        4: course.f_class   # Friday
+    }
+
+    for upload in uploads:
+        # Convert the uploaded time to Central Time Zone
+        upload_dt = upload.uploaded.astimezone(central_tz)
+        upload_day = upload_dt.weekday()
+        upload_time = upload_dt.time()
+        
+        # Combine date and time with proper timezone
+        start_datetime = central_tz.localize(datetime.datetime.combine(upload_dt.date(), course.class_start))
+        end_datetime = central_tz.localize(datetime.datetime.combine(upload_dt.date(), course.class_end))
+
+        print(f"Day Mapping: {day_mapping}")
+        print(f"Upload Day: {upload_day}, Mapped Value: {day_mapping.get(upload_day, False)}")
+        print(f"Upload Time: {upload_time}, Course Time Range: {start_datetime} {end_datetime}")
+        
+        if day_mapping.get(upload_day, False) and (start_datetime <= upload_dt <= end_datetime):
+            valid_uploads.append(upload)
+
+    return valid_uploads

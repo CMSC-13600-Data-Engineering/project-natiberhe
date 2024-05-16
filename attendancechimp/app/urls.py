@@ -16,4 +16,6 @@ urlpatterns = [
     path('qr_create_submit', views.qr_create_submit, name='qr_create_submit'),
     path('qr_upload', views.qr_upload, name='qr_upload'), # qr_upload: localhost:8000/qr_upload
     path('qr_upload_submit', views.qr_upload_submit, name='qr_upload_submit'),
+    path('getUploads', views.getUploads, name='getUploads'), 
+
 ]

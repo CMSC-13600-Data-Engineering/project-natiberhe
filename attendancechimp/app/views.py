@@ -16,10 +16,8 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login
 from django.core.exceptions import PermissionDenied
-
 # these are import from your model
 from .models import *
-
 import time
 
 
@@ -301,4 +299,59 @@ def qr_upload_submit(request):
     process_upload(created_obj.course, student, file) 
 
     return render(request, 'app/index.html', {})
+
+
+from django.http import JsonResponse
+from .models import getUploadsForCourse
+
+def getUploads(request):
+    course_id = request.GET.get('course')
+    if not course_id:
+        return JsonResponse({'error': 'Course ID is required'}, status=400)
+    
+    try:
+        course_id = int(course_id)
+        uploads = getUploadsForCourse(course_id)
+    except ValueError:
+        return JsonResponse({'error': 'Invalid course ID'}, status=400)
+    except Course.DoesNotExist:
+        return JsonResponse({'error': 'Course not found'}, status=404)
+
+    uploads_data = [
+        {'username': upload.student.user.username, 'upload_time_as_string': upload.uploaded.strftime('%Y-%m-%d %H:%M:%S')}
+        for upload in uploads
+    ]
+
+    return JsonResponse(uploads_data, safe=False)
+
+from django.http import JsonResponse
+from .models import getUploadsForCourse, Course
+
+def getUploads(request):
+    # Step 1: Check if there is a URL argument "course"
+    course_id = request.GET.get('course')
+    
+    # Step 2: If course ID is missing, return an error
+    if not course_id:
+        return JsonResponse({'error': 'Course ID is required'}, status=400)
+    
+    try:
+        # Convert course_id to integer and fetch uploads
+        course_id = int(course_id)
+        uploads = getUploadsForCourse(course_id)
+    except ValueError:
+        # Handle case where course_id is not an integer
+        return JsonResponse({'error': 'Invalid course ID'}, status=400)
+    except Course.DoesNotExist:
+        # Handle case where no course matches the given ID
+        return JsonResponse({'error': 'Course not found'}, status=404)
+
+    # Step 3: Format the uploads into the specified structure
+    uploads_data = [
+        {'username': upload.student.user.username, 'upload_time_as_string': upload.uploaded.strftime('%Y-%m-%d %H:%M:%S')}
+        for upload in uploads
+    ]
+
+    # Step 4: Return the serialized uploads data as JSON response
+    return JsonResponse(uploads_data, safe=False)
 
