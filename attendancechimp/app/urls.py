@@ -7,6 +7,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+<<<<<<< HEAD
     path('', views.index, name='index'), # index: localhost:8000/app
     path('new', views.new, name='new'), # new: localhost:8000/app/new
     path('new_submit', views.new_submit, name='new_submit'),
@@ -18,4 +19,11 @@ urlpatterns = [
     path('qr_upload_submit', views.qr_upload_submit, name='qr_upload_submit'),
     path('getUploads', views.getUploads, name='getUploads'), 
 
+=======
+    path('handleform', views.handle_form, name='form'),
+    path('', views.index, name='index'),
+    #path('handleform', views.handle_form, name='form'),
+    path('app/new', views.new, name='new'),
+    path('app/create_user', views.create_user, name='create_user'),
+>>>>>>> 35d50855cb108c78ed0938823f6c660e142bece3
 ]

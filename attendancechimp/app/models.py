@@ -6,7 +6,47 @@ through all of this step-by-step.
 
 # import to get the models class  from django
 from django.db import models
+from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
 
+class UniversityPerson(models.Model):
+    """This model describes a university person, either a student
+    or an instructor. It contains all of the necessary data that
+    might identify such a person.
+
+    Note: We link this entity to the Django user model so we only
+    need to store information unique to a "UniversityPerson" above
+    and beyond a simple user.
+    """
+
+    # an auto incrementing id
+    auto_increment_id = models.AutoField(primary_key=True)
+
+    # is an instructor or student?
+    is_instructor = models.BooleanField(null=False)
+
+    # relate to django auth user
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+# for each model, I like to wrap it in a simple helper function
+# for example for the user model, when creating a user we create
+# two users one university person and one django user.
+def create_ac_user(name, email, password, is_instructor):
+    """Creates an ac user and a corresponding django user"""
+
+    # first create django user
+    user = User.objects.create_user(name, email, password)
+    user.save()
+
+    # then create ac user
+    up = UniversityPerson(is_instructor=is_instructor, user=user)
+    up.save()
+
+    # return both users
+    return user, up
+
+
+<<<<<<< HEAD
 # get access to django users
 from django.contrib.auth.models import User
 
@@ -51,13 +91,19 @@ def create_ac_user(name, email, password, is_instructor):
     return user, up
 
 
+=======
+>>>>>>> 35d50855cb108c78ed0938823f6c660e142bece3
 class Course(models.Model):
     """A course represents a single course using attendancechimp. A course
     stores a reference to the instructor as well as the times/days of the
     week that it meets."""
 
     # an internal unique id
+<<<<<<< HEAD
     auto_increment_id = models.AutoField(primary_key=True)
+=======
+    auto_increment_id = models.AutoField(primary_key=True, default=1)
+>>>>>>> 35d50855cb108c78ed0938823f6c660e142bece3
 
     # a course name
     name = models.CharField(max_length=128)
@@ -110,7 +156,11 @@ class QRCode(models.Model):
     """
 
     # an internal unique id
+<<<<<<< HEAD
     auto_increment_id = models.AutoField(primary_key=True)
+=======
+    auto_increment_id = models.AutoField(primary_key=True, default=1)
+>>>>>>> 35d50855cb108c78ed0938823f6c660e142bece3
 
     # linked to a course
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -133,6 +183,7 @@ def create_qr_code(course):
 
 
 class QRCodeUpload(models.Model):
+<<<<<<< HEAD
     id = models.AutoField(primary_key=True)  # Explicitly defining the ID field, though it's usually not necessary
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     student = models.ForeignKey(UniversityPerson, on_delete=models.CASCADE)
@@ -189,3 +240,28 @@ def getUploadsForCourse(course_id):
             valid_uploads.append(upload)
 
     return valid_uploads
+=======
+    """This model represents a particular qrcode upload from a student."""
+
+    # an internal unique id
+    auto_increment_id = models.AutoField(primary_key=True, default=1)
+
+    # linked to a course
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    # linked to a student
+    student = models.ForeignKey(UniversityPerson, on_delete=models.CASCADE)
+
+    # data
+    image = models.ImageField(upload_to="data")
+
+    # time stamp on upload
+    uploaded = models.DateTimeField(auto_now_add=True)
+
+
+# this is the functionality to process an upload
+def process_upload(course, student, image):
+    upload = QRCodeUpload(course=course, student=student, image=image)
+    upload.save()
+    return upload
+>>>>>>> 35d50855cb108c78ed0938823f6c660e142bece3
