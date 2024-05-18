@@ -1,0 +1,31 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}QR Code For Class{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  
+  {% if is_student %}
+
+    <h2>Students cannot do this!</h2>
+
+  {% else %}
+  
+  <div id="qrcode"></div>
+<script type="text/javascript">
+var qrcode = new QRCode(document.getElementById("qrcode"), {
+    text: "{{qrcode.code}}",
+    width: 128,
+    height: 128,
+    colorDark : "#5868bf",
+    colorLight : "#ffffff",
+    correctLevel : QRCode.CorrectLevel.H
+});
+</script>
+
+  
+{% endif %}
+
+{% endif %}
+{% endblock %}

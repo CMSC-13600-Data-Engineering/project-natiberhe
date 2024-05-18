@@ -4,31 +4,30 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div style="text-align: center;">
-  <h2>Bio</h2>
-  <p>Nathan Berhe, fourth year, working on this alone</p>
-</div>
+	<h2>AttendanceChip Dashboard</h2>
 
-<div style="text-align: center;">
-  Current time: {{ current_time }}
-</div>
+	<br/>
+	{% if user.is_authenticated %}
 
-<div style="text-align: center;">
-{% if user.is_authenticated %}
-  Hi,  <strong style="background-color: yellow;">{{ user.username }}</strong>!
-  <form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="next" value="/app/">
-    <button type="submit">Logout</button>
-</form>
-{% else %}
-  <p>You are not logged in</p>
-  <form action="{% url 'login' %}" method="GET">
-    <button type="submit">Log In</button>
-</form>
-  <form action="{% url 'new' %}" method="GET">
-    <button type="submit">Sign Up</button>
-</form>
-</div>
-{% endif %}
+	  <h4>Hi {{ user.username }}!</h4>
+
+	  <a href="http://localhost:8000/app/course_create">Create a course</a><br/>
+	  <a href="http://localhost:8000/app/qr_create">Create a new QR code</a> <br/>
+	  <a href="http://localhost:8000/app/qr_upload">Upload a QR code</a>
+	  <p><br/></p>
+	  
+	  <form method="post" action="{% url 'logout' %}">
+    		{% csrf_token %}
+      <button type="submit">logout</button>
+	  </form>
+	
+	{% else %}
+
+	  <h4>You are not logged in</h4>
+	  <a href="{% url 'login' %}">Log In</a> <br/>
+	  <a href="http://localhost:8000/app/new">Sign Up</a>
+	
+	{% endif %}
+
+
 {% endblock %}
